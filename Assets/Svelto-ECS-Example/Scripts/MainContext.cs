@@ -3,6 +3,7 @@ using Svelto.ECS.Example.Survive.Enemies;
 using Svelto.ECS.Example.Survive.Player;
 using Svelto.ECS.Example.Survive.Player.Gun;
 using Svelto.ECS.Example.Survive.Player.Pickup;
+using Svelto.ECS.Example.Survive.Player.Special;
 using Svelto.ECS.Example.Survive.Sound;
 using Svelto.ECS.Example.Survive.HUD;
 using Svelto.Context;
@@ -148,6 +149,7 @@ namespace Svelto.ECS.Example.Survive
             var playerAnimationEngine = new PlayerAnimationEngine();
             var playerDeathEngine = new PlayerDeathEngine(entityFunctions);
             var playerAmmoEngine = new PlayerGunAmmoEngine(pickupSequence);
+            var playerSpeacialEngine = new PlayerSpecialEngine(time, physics);
 
             //Enemy related engines
             var enemyAnimationEngine = new EnemyAnimationEngine(time);
@@ -250,6 +252,8 @@ namespace Svelto.ECS.Example.Survive
             _enginesRoot.AddEngine(new PlayerInputEngine());
             _enginesRoot.AddEngine(new PlayerGunShootingFXsEngine());
             _enginesRoot.AddEngine(playerAmmoEngine);
+            _enginesRoot.AddEngine(playerSpeacialEngine);
+
             //enemy engines
             _enginesRoot.AddEngine(enemyWaveSpawnerEngine);
             _enginesRoot.AddEngine(enemyAttackEngine);
@@ -311,6 +315,9 @@ namespace Svelto.ECS.Example.Survive
             //explicitly, I have to create if from the existing gameobject.
             var gun = player.GetComponentInChildren<PlayerShootingImplementor>();
             _entityFactory.BuildEntity<PlayerGunEntityDescriptor>(gun.gameObject.GetInstanceID(), new object[] {gun});
+
+            var special = player.GetComponentInChildren<PlayerSpecialImplementor>();
+            _entityFactory.BuildEntity<PlayerSpecialEntityDescriptor>(special.gameObject.GetInstanceID(), new object[] { special });
         }
 
         void BuildCameraEntity()

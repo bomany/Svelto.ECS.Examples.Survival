@@ -30,6 +30,7 @@ namespace Svelto.ECS.Example.Survive
     public interface IRigidBodyComponent: IComponent
     {
         bool isKinematic { set; }
+        Vector3 velocity { set; }
     }
 
     public interface ISpeedComponent: IComponent

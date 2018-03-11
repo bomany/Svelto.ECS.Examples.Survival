@@ -17,6 +17,7 @@ namespace Svelto.ECS.Example.Survive.Player
         Transform playerTransform;
 
         public bool isKinematic { set { playerRigidbody.isKinematic = value; } }
+        public Vector3 velocity { set { playerRigidbody.velocity = value; } }
         public Quaternion rotation { set {playerRigidbody.MoveRotation(value);} }
 
         public float       movementSpeed { get { return speed; } }

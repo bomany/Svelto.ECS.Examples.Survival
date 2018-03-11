@@ -36,5 +36,6 @@ namespace Svelto.ECS.Example.Survive.Enemies
         }
 
         public bool isKinematic { set {_rigidBody.isKinematic = value; } }
+        public Vector3 velocity { set { _rigidBody.velocity = value; } }
     }
 }

@@ -18,11 +18,14 @@ namespace Svelto.ECS.Example.Survive.Player
         Vector3 input { get; set; }
         Ray camRay { get; set; }
         bool fire { get; set; }
+        bool special { get; set; }
     }
 
     public class PlayerTargetEntityView : EntityView
     {
         public IPlayerTargetComponent     playerTargetComponent;
+        public IPositionComponent         positionComponent;
+        public IRigidBodyComponent        rigidBodyComponent;
     }
 }
 
@@ -35,3 +38,15 @@ namespace Svelto.ECS.Example.Survive.Player.Gun
         public IGunHitTargetComponent    gunHitTargetComponent;
     }
 }
+
+namespace Svelto.ECS.Example.Survive.Player.Special
+{
+    public class SpecialEntityView : EntityView
+    {
+        public IPlayerSpecialAtributesComponent     specialComponent;
+        //public IPositionComponent                   positionComponent;
+    }
+}
+
+
+
