@@ -8,12 +8,14 @@ namespace Svelto.ECS.Example.Survive.Player
         public int   DamagePerShot      = 20;    // The damage inflicted by each bullet.
         public float TimeBetweenBullets = 0.15f; // The time between each shot.
         public float Range              = 100f;  // The distance the gun can fire.
+        public int Ammo = 10;    // Ammo left in gun
 
         public float               timeBetweenBullets { get { return TimeBetweenBullets; } }
         public float               range              { get { return Range; } }
         public int                 damagePerShot      { get { return DamagePerShot; } }
         public DispatchOnSet<bool> targetHit          { get { return _targetHit; } }
         public Vector3             lastTargetPosition { set; get; }
+        public int                 ammo               { get { return Ammo; } set { Ammo = value; } }
 
         public float timer    { get; set; }
         public Ray   shootRay { get { return new Ray(_transform.position, _transform.forward); } }
