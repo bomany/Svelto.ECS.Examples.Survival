@@ -58,6 +58,7 @@ namespace Svelto.ECS.Example.Survive.Player.Gun
                 playerGunComponent.timer += _time.deltaTime;
                 
                 if (_playerEntityView.inputComponent.fire &&
+                    _playerGunEntityView.gunComponent.ammo > 0 &&
                     playerGunComponent.timer >= _playerGunEntityView.gunComponent.timeBetweenBullets)
                     Shoot(_playerGunEntityView);
 

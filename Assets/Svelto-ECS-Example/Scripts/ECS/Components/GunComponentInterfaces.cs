@@ -10,6 +10,7 @@ namespace Svelto.ECS.Example.Survive.Player.Gun
         int     damagePerShot      { get; }
         float   timer              { get; set; }
         Vector3 lastTargetPosition { get; set; }
+        int ammo { get; set; }
     }
 
     public interface IGunHitTargetComponent : IComponent
