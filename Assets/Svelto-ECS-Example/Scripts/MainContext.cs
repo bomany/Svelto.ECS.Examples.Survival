@@ -162,6 +162,7 @@ namespace Svelto.ECS.Example.Survive
             //pickup related engines
             var pickupEngine = new PickupEngine(pickupSequence);
             var pickupSpawnerEngine = new PickupSpawnerEngine(factory, _entityFactory, physics);
+            var pickupDestroyEngine = new PickupDestroyEngine(entityFunctions);
 
             //hud and sound engines
             var hudEngine = new HUDEngine(time);
@@ -229,6 +230,13 @@ namespace Svelto.ECS.Example.Survive
                         {
                             {(int)PickupType.Ammo, new IStep[] { playerAmmoEngine } }
                         }
+                    },
+                    {
+                        playerAmmoEngine,
+                        new To
+                        {
+                            pickupDestroyEngine
+                        }
                     }
                 }
             );
@@ -251,6 +259,8 @@ namespace Svelto.ECS.Example.Survive
             _enginesRoot.AddEngine(enemyDeathEngine);
             //pickup engines
             _enginesRoot.AddEngine(pickupEngine);
+            _enginesRoot.AddEngine(pickupSpawnerEngine);
+            _enginesRoot.AddEngine(pickupDestroyEngine);
             //other engines
             _enginesRoot.AddEngine(new CameraFollowTargetEngine(time));
             _enginesRoot.AddEngine(damageSoundEngine);

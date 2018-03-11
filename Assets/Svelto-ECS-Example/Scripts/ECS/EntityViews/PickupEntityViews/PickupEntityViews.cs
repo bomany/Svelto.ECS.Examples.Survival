@@ -4,5 +4,6 @@
     {
         public IPickupAttributesComponent pickupComponent;
         public IPickupTriggerComponent targetTriggerComponent;
+        public IDestroyComponent destroyComponent;
     }
 }
