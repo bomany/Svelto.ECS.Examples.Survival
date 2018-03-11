@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Svelto.ECS.Example.Survive.Enemies;
 using Svelto.ECS.Example.Survive.Player;
 using Svelto.ECS.Example.Survive.Player.Gun;
+using Svelto.ECS.Example.Survive.Player.Pickup;
 using Svelto.ECS.Example.Survive.Sound;
 using Svelto.ECS.Example.Survive.HUD;
 using Svelto.Context;
@@ -131,7 +132,8 @@ namespace Svelto.ECS.Example.Survive
             //between engines
             Sequencer playerDamageSequence = new Sequencer();
             Sequencer enemyDamageSequence = new Sequencer();
-            
+            Sequencer pickupSequence = new Sequencer();
+
             //wrap non testable unity static classes, so that 
             //can be mocked if needed.
             IRayCaster rayCaster = new RayCaster();
@@ -144,7 +146,7 @@ namespace Svelto.ECS.Example.Survive
             var playerMovementEngine = new PlayerMovementEngine(rayCaster, time);
             var playerAnimationEngine = new PlayerAnimationEngine();
             var playerDeathEngine = new PlayerDeathEngine(entityFunctions);
-            var playerAmmoEngine = new PlayerGunAmmoEngine();
+            var playerAmmoEngine = new PlayerGunAmmoEngine(pickupSequence);
 
             //Enemy related engines
             var enemyAnimationEngine = new EnemyAnimationEngine(time);
@@ -155,7 +157,10 @@ namespace Svelto.ECS.Example.Survive
             //var enemySpawnerEngine = new EnemySpawnerEngine(factory, _entityFactory);
             var enemyWaveSpawnerEngine = new EnemyWaveSpawnerEngine(factory, _entityFactory);
             var enemyDeathEngine = new EnemyDeathEngine(entityFunctions);
-            
+
+            //pickup related engines
+            var pickupEngine = new PickupEngine(pickupSequence);
+
             //hud and sound engines
             var hudEngine = new HUDEngine(time);
             var damageSoundEngine = new DamageSoundEngine();
@@ -213,6 +218,19 @@ namespace Svelto.ECS.Example.Survive
                 }
             );
 
+            pickupSequence.SetSequence(
+                new Steps
+                {
+                    {
+                        pickupEngine,
+                        new To
+                        {
+                            {(int)PickupType.Ammo, new IStep[] { playerAmmoEngine } }
+                        }
+                    }
+                }
+            );
+
             //Mandatory step to make engines work
             //Player engines
             _enginesRoot.AddEngine(playerMovementEngine);
@@ -229,6 +247,8 @@ namespace Svelto.ECS.Example.Survive
             _enginesRoot.AddEngine(enemyAnimationEngine);
             _enginesRoot.AddEngine(enemyHealthEngine);
             _enginesRoot.AddEngine(enemyDeathEngine);
+            //pickup engines
+            _enginesRoot.AddEngine(pickupEngine);
             //other engines
             _enginesRoot.AddEngine(new CameraFollowTargetEngine(time));
             _enginesRoot.AddEngine(damageSoundEngine);

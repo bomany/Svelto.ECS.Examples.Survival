@@ -3,8 +3,19 @@ using System.Collections;
 
 namespace Svelto.ECS.Example.Survive.Player.Gun
 {
-    public class PlayerGunAmmoEngine : SingleEntityViewEngine<GunEntityView>
+    public class PlayerGunAmmoEngine : SingleEntityViewEngine<GunEntityView>, IStep<PickupInfo>
     {
+        public PlayerGunAmmoEngine(ISequencer pickupSequence)
+        {
+            _pickupSequence = pickupSequence;
+        }
+
+        public void Step(ref PickupInfo pickup, int type)
+        {
+            IncrementAmmo(pickup.amount);
+            _pickupSequence.Next(this, ref pickup);
+        }
+
         protected override void Add(GunEntityView entityView)
         {
             _playerGunEntityView = entityView;
@@ -28,6 +39,7 @@ namespace Svelto.ECS.Example.Survive.Player.Gun
 
 
         GunEntityView _playerGunEntityView;
+        ISequencer _pickupSequence;
     }
 
 }
