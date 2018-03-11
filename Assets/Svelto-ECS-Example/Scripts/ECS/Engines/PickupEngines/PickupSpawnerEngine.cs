@@ -75,7 +75,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             return pickuptoSpawn;
         }
 
-        readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(1);
+        readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(10);
 
         static readonly int SHOOTABLE_MASK = LayerMask.GetMask("Shootable");
 
