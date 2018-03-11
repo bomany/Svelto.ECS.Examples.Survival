@@ -17,16 +17,35 @@ public class SpawningData : MonoBehaviour
     public void SerializeData()
     {
         serializedOnce = true;
-        var data = GetComponents<EnemySpawnDataSource>();
-        JSonEnemySpawnData[] spawningdata = new JSonEnemySpawnData[data.Length];
+        var enemyData = GetComponents<EnemySpawnDataSource>();
+        if (enemyData.Length > 0)
+        {
+            JSonEnemySpawnData[] spawningdata = new JSonEnemySpawnData[enemyData.Length];
 
-        for (int i = 0; i < data.Length; i++)
-            spawningdata[i] = new JSonEnemySpawnData(data[i].spawnData);
+            for (int i = 0; i < enemyData.Length; i++)
+                spawningdata[i] = new JSonEnemySpawnData(enemyData[i].spawnData);
 
-        var json = JsonHelper.arrayToJson(spawningdata);
+            var json = JsonHelper.arrayToJson(spawningdata);
 
-        Utility.Console.Log(json);
+            Utility.Console.Log(json);
 
-        File.WriteAllText(Application.persistentDataPath+ "/EnemySpawningData.json", json);
+            File.WriteAllText(Application.persistentDataPath + "/EnemySpawningData.json", json);
+        }
+
+        var pickupData = GetComponents<PickupSpawnDataSource>();
+        if (pickupData.Length > 0)
+        {
+            JsonPickupSpawnData[] spawningdata = new JsonPickupSpawnData[pickupData.Length];
+
+            for (int i = 0; i < pickupData.Length; i++)
+                spawningdata[i] = new JsonPickupSpawnData(pickupData[i].spawnData);
+
+            var json = JsonHelper.arrayToJson(spawningdata);
+
+            Utility.Console.Log(json);
+
+            File.WriteAllText(Application.persistentDataPath + "/PickupSpawningData.json", json);
+
+        }
     }
 }

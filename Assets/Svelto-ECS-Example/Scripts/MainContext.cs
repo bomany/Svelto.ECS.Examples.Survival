@@ -138,7 +138,8 @@ namespace Svelto.ECS.Example.Survive
             //can be mocked if needed.
             IRayCaster rayCaster = new RayCaster();
             ITime      time      = new Survive.Time();
-            
+            IPhysics physics = new Physics();
+
             //Player related engines. ALL the dependecies must be solved at this point
             //through constructor injection.
             var playerHealthEngine = new HealthEngine(playerDamageSequence);
@@ -160,6 +161,7 @@ namespace Svelto.ECS.Example.Survive
 
             //pickup related engines
             var pickupEngine = new PickupEngine(pickupSequence);
+            var pickupSpawnerEngine = new PickupSpawnerEngine(factory, _entityFactory, physics);
 
             //hud and sound engines
             var hudEngine = new HUDEngine(time);
