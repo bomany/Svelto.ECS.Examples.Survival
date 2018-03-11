@@ -151,7 +151,8 @@ namespace Svelto.ECS.Example.Survive
             var enemyHealthEngine = new HealthEngine(enemyDamageSequence);
             var enemyAttackEngine = new EnemyAttackEngine(playerDamageSequence, time);
             var enemyMovementEngine = new EnemyMovementEngine();
-            var enemySpawnerEngine = new EnemySpawnerEngine(factory, _entityFactory);
+            //var enemySpawnerEngine = new EnemySpawnerEngine(factory, _entityFactory);
+            var enemyWaveSpawnerEngine = new EnemyWaveSpawnerEngine(factory, _entityFactory);
             var enemyDeathEngine = new EnemyDeathEngine(entityFunctions);
             
             //hud and sound engines
@@ -205,7 +206,7 @@ namespace Svelto.ECS.Example.Survive
                         { 
                             {  DamageCondition.Damage, new IStep[] { enemyAnimationEngine, damageSoundEngine }  },
                             {  DamageCondition.Dead, new IStep[] { enemyMovementEngine, 
-                                enemyAnimationEngine, playerShootingEngine, enemySpawnerEngine, damageSoundEngine, enemyDeathEngine }  },
+                                enemyAnimationEngine, playerShootingEngine, enemyWaveSpawnerEngine, damageSoundEngine, enemyDeathEngine }  },
                         }  
                     }  
                 }
@@ -220,7 +221,7 @@ namespace Svelto.ECS.Example.Survive
             _enginesRoot.AddEngine(new PlayerInputEngine());
             _enginesRoot.AddEngine(new PlayerGunShootingFXsEngine());
             //enemy engines
-            _enginesRoot.AddEngine(enemySpawnerEngine);
+            _enginesRoot.AddEngine(enemyWaveSpawnerEngine);
             _enginesRoot.AddEngine(enemyAttackEngine);
             _enginesRoot.AddEngine(enemyMovementEngine);
             _enginesRoot.AddEngine(enemyAnimationEngine);
