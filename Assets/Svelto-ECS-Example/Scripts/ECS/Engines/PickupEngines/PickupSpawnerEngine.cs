@@ -14,7 +14,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             _gameobjectFactory = gameobjectFactory;
             _entityFactory = entityFactory;
             _physics = physics;
-            _maxPickups = 10;
+            _maxPickups = 1000;
             _currentPickups = 0;
 
             IntervaledTick().Run();
@@ -35,25 +35,35 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
                 if (pickuptoSpawn != null &&
                     _currentPickups < _maxPickups)
                 {
-                    var index = Random.Range(0, pickuptoSpawn.Length);
-                    var pickupData = pickuptoSpawn[index];
+                    var chance = Random.Range(0f, 1f);
+                    float lowLimit;
+                    float hiLimit = 0f;
 
-                    var topSpawnZone = pickupData.spawnZone.topRight;
-                    var bottomSpawnZone = pickupData.spawnZone.bottomLeft;
-                    Vector3 spawnPoint = GetSpawnPoint(topSpawnZone, bottomSpawnZone, 1f);
+                    for (var i = 0; i < pickuptoSpawn.Length; i++ )
+                    {
+                        var pickupData = pickuptoSpawn[i];
 
-                    var go = _gameobjectFactory.Build(pickupData.pickupPrefab);
+                        lowLimit = hiLimit;
+                        hiLimit += pickuptoSpawn[i].chanceToSpawn;
 
-                    List<IImplementor> implementors = new List<IImplementor>();
-                    go.GetComponentsInChildren(implementors);
+                        if (chance >= lowLimit && chance < hiLimit)
+                        {
+                            var topSpawnZone = pickupData.spawnZone.topRight;
+                            var bottomSpawnZone = pickupData.spawnZone.bottomLeft;
 
-                    _entityFactory.BuildEntity<PickupEntityDescriptor>(
-                                go.GetInstanceID(), implementors.ToArray());
+                            Vector3 spawnPoint = GetSpawnPoint(topSpawnZone, bottomSpawnZone, 1.5f);
 
-                    go.transform.position = spawnPoint;
+                            var go = _gameobjectFactory.Build(pickupData.pickupPrefab);
 
-                    _currentPickups++;
+                            List<IImplementor> implementors = new List<IImplementor>();
+                            go.GetComponentsInChildren(implementors);
+                            _entityFactory.BuildEntity<PickupEntityDescriptor>(
+                                        go.GetInstanceID(), implementors.ToArray());
+                            go.transform.position = spawnPoint;
+                            _currentPickups++;
+                        }
 
+                    }
                 }
             }
         }
@@ -84,7 +94,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             return pickuptoSpawn;
         }
 
-        readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(10);
+        readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(1);
 
         static readonly int SHOOTABLE_MASK = LayerMask.GetMask("Shootable");
 

@@ -8,10 +8,12 @@ namespace Svelto.ECS.Example.Survive
     {
         public GameObject pickupPrefab;
         public SpawningZoneStruct spawnZone;
+        public float chanceToSpawn;
 
         public JsonPickupSpawnData(PickupSpawnData spawnData)
         {
             pickupPrefab = spawnData.pickupPrefab;
+            chanceToSpawn = spawnData.chanceToSpawn;
             spawnZone = new SpawningZoneStruct(spawnData.topRight.position, spawnData.bottomLeft.position);
         }
     }
@@ -22,6 +24,8 @@ namespace Svelto.ECS.Example.Survive
         public GameObject pickupPrefab;
         public Transform topRight;
         public Transform bottomLeft;
+        [Range(0f, 1f)]
+        public float chanceToSpawn;
     }
 
     [Serializable]
