@@ -18,7 +18,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
 
         public void Step(ref PickupInfo pickup, int type)
         {
-            var entity = entityViewsDB.QueryEntityView<PickupEntityView>(pickup.entityPickupID);
+            var entity = entityViewsDB.QueryEntityView<PickupEntityView>(pickup.entityID);
             entity.destroyComponent.destroyed.value = true;
             _entityFunctions.RemoveEntity(entity.ID);
         }

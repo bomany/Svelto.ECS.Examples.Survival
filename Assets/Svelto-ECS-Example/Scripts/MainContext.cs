@@ -143,7 +143,7 @@ namespace Svelto.ECS.Example.Survive
 
             //Player related engines. ALL the dependecies must be solved at this point
             //through constructor injection.
-            var playerHealthEngine = new HealthEngine(playerDamageSequence);
+            var playerHealthEngine = new HealthEngine(playerDamageSequence, pickupSequence);
             var playerShootingEngine = new PlayerGunShootingEngine(enemyKilledObservable, enemyDamageSequence, rayCaster, time);
             var playerMovementEngine = new PlayerMovementEngine(rayCaster, time);
             var playerAnimationEngine = new PlayerAnimationEngine();
@@ -154,7 +154,7 @@ namespace Svelto.ECS.Example.Survive
             //Enemy related engines
             var enemyAnimationEngine = new EnemyAnimationEngine(time);
             //HealthEngine is a different object for the enemy because it uses a different sequence
-            var enemyHealthEngine = new HealthEngine(enemyDamageSequence);
+            var enemyHealthEngine = new HealthEngine(enemyDamageSequence, pickupSequence);
             var enemyAttackEngine = new EnemyAttackEngine(playerDamageSequence, time);
             var enemyMovementEngine = new EnemyMovementEngine();
             //var enemySpawnerEngine = new EnemySpawnerEngine(factory, _entityFactory);
@@ -230,14 +230,22 @@ namespace Svelto.ECS.Example.Survive
                         pickupEngine,
                         new To
                         {
-                            {(int)PickupType.Ammo, new IStep[] { playerAmmoEngine } }
+                            {(int)PickupType.Ammo, new IStep[] { pickupSpawnerEngine, playerAmmoEngine } },
+                            {(int)PickupType.Health, new IStep[] { pickupSpawnerEngine, playerHealthEngine } }
                         }
                     },
                     {
                         playerAmmoEngine,
                         new To
                         {
-                            pickupDestroyEngine
+                            {(int)PickupType.Ammo, new IStep[] { hudEngine, pickupDestroyEngine } },
+                        }
+                    },
+                    {
+                        playerHealthEngine,
+                        new To
+                        {
+                            {(int)PickupType.Health, new IStep[] { hudEngine, pickupDestroyEngine } }
                         }
                     }
                 }

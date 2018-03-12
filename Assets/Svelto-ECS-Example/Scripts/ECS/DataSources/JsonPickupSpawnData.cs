@@ -8,8 +8,6 @@ namespace Svelto.ECS.Example.Survive
     {
         public GameObject pickupPrefab;
         public SpawningZoneStruct spawnZone;
-        //Radius of the object plus extra padding.
-        public float sizeRadius;
 
         public JsonPickupSpawnData(PickupSpawnData spawnData)
         {
@@ -24,7 +22,6 @@ namespace Svelto.ECS.Example.Survive
         public GameObject pickupPrefab;
         public Transform topRight;
         public Transform bottomLeft;
-        public float sizeRadius;
     }
 
     [Serializable]

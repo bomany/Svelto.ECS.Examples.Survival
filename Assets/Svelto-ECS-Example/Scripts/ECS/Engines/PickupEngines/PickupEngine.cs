@@ -49,7 +49,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
                             pickupCollisionData.otherEntityID == targetEntityView.ID)
                         {
                             pickupEntityView.pickupComponent.empty = true;
-                            var pickupInfo = new PickupInfo(pickupEntityView.pickupComponent.amount, pickupEntityView.ID);
+                            var pickupInfo = new PickupInfo(pickupEntityView.pickupComponent.amount, pickupCollisionData.otherEntityID, pickupEntityView.ID);
                             _pickupSequence.Next(this, ref pickupInfo, (int)pickupEntityView.pickupComponent.pickupType);
                         }
                     }

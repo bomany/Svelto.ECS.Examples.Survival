@@ -26,24 +26,26 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             this.collides = collides;
         }
     }
-
+}
+namespace Svelto.ECS.Example.Survive
+{
     public enum PickupType
     {
         Ammo = 1,
         Health = 2
     }
-}
-namespace Svelto.ECS.Example.Survive
-{
+
     public struct PickupInfo
     {
         public int amount { get; private set; }
-        public int entityPickupID { get; private set; }
+        public int triggerEntityID { get; private set; }
+        public int entityID { get; private set; }
 
-        public PickupInfo(int amount, int entityPickupID)
+        public PickupInfo(int amount, int triggerEntityID, int entityID)
         {
             this.amount = amount;
-            this.entityPickupID = entityPickupID;
+            this.triggerEntityID = triggerEntityID;
+            this.entityID = entityID;
         }
     }
 }

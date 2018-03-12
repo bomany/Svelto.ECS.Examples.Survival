@@ -2,6 +2,8 @@ using Svelto.Tasks.Enumerators;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Svelto.ECS.Example.Survive.Player.Gun;
+using System.Linq;
 
 namespace Svelto.ECS.Example.Survive.HUD
 {
@@ -15,13 +17,29 @@ namespace Svelto.ECS.Example.Survive.HUD
     /// Therefore using the Add/Remove callbacks is not wrong, but I try to not
     /// promote their use. 
     /// </summary>
-    public class HUDEngine : IQueryingEntityViewEngine, IStep<DamageInfo>
+    public class HUDEngine : SingleEntityViewEngine<GunEntityView>, IQueryingEntityViewEngine, IStep<DamageInfo>, IStep<PickupInfo>
     {
         public IEntityViewsDB entityViewsDB { set; private get; }
 
         public HUDEngine(ITime time)
         {
             _time = time;
+        }
+
+        protected override void Add(GunEntityView entityView)
+        {
+            _playerGunEntityView = entityView;
+            entityView.gunHitTargetComponent.targetHit.NotifyOnValueSet(OnFireEvent);
+        }
+
+        protected override void Remove(GunEntityView entityView)
+        {
+            _playerGunEntityView = null;
+        }
+
+        void OnFireEvent(int ID, bool targetHasBeenHit)
+        {
+            UpdateAmmo();
         }
 
         public void Ready()
@@ -77,6 +95,37 @@ namespace Svelto.ECS.Example.Survive.HUD
             }
         }
 
+        void UpdateSlider(PickupInfo pickup)
+        {
+            var hudEntityViews = entityViewsDB.QueryEntityViews<HUDEntityView>();
+            for (int i = 0; i < hudEntityViews.Count; i++)
+            {
+                var guiEntityView = hudEntityViews[i];
+                var damageComponent = guiEntityView.damageImageComponent;
+
+                damageComponent.imageColor = damageComponent.flashColor;
+
+                var hudDamageEntityView =
+                    entityViewsDB.QueryEntityView<HUDDamageEntityView>(pickup.triggerEntityID);
+
+                guiEntityView.healthSliderComponent.value = hudDamageEntityView.healthComponent.currentHealth;
+            }
+        }
+
+        void UpdateAmmo()
+        {
+            var hudEntityViews = entityViewsDB.QueryEntityViews<HUDEntityView>();
+            for (int i = 0; i < hudEntityViews.Count; i++)
+            {
+                var guiEntityView = hudEntityViews[i];
+
+                if (_playerGunEntityView != null)
+                {
+                    guiEntityView.ammoComponent.ammo = _playerGunEntityView.gunComponent.ammo;
+                }
+            }
+        }
+
         IEnumerator RestartLevelAfterFewSeconds()
         {
             _waitForSeconds.Reset(5);
@@ -101,8 +150,20 @@ namespace Svelto.ECS.Example.Survive.HUD
                 OnDeadEvent();
         }
 
+        public void Step(ref PickupInfo token, int type)
+        {
+            if (type == (int)PickupType.Health)
+            {
+                UpdateSlider(token);
+            } else if (type == (int)PickupType.Ammo)
+            {
+                UpdateAmmo();
+            }
+        }
+
         readonly WaitForSecondsEnumerator  _waitForSeconds = new WaitForSecondsEnumerator(5);
         readonly ITime                     _time;
+        GunEntityView                      _playerGunEntityView;
     }
 }
 

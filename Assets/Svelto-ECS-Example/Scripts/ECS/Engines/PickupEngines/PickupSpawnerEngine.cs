@@ -7,16 +7,22 @@ using UnityEngine;
 
 namespace Svelto.ECS.Example.Survive.Player.Pickup
 {
-    public class PickupSpawnerEngine : IEngine
+    public class PickupSpawnerEngine : IEngine, IStep<PickupInfo>
     {
         public PickupSpawnerEngine(Factories.IGameObjectFactory gameobjectFactory, IEntityFactory entityFactory, IPhysics physics)
         {
             _gameobjectFactory = gameobjectFactory;
             _entityFactory = entityFactory;
             _physics = physics;
-            _max_pickups = 10;
+            _maxPickups = 10;
+            _currentPickups = 0;
 
             IntervaledTick().Run();
+        }
+
+        public void Step(ref PickupInfo pickup, int type)
+        {
+            _currentPickups--;
         }
 
         IEnumerator IntervaledTick()
@@ -26,14 +32,15 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             {
                 yield return _waitForSecondsEnumerator;
 
-                if (pickuptoSpawn != null)
+                if (pickuptoSpawn != null &&
+                    _currentPickups < _maxPickups)
                 {
-                    var index = Random.Range(0, pickuptoSpawn.Length - 1);
+                    var index = Random.Range(0, pickuptoSpawn.Length);
                     var pickupData = pickuptoSpawn[index];
 
                     var topSpawnZone = pickupData.spawnZone.topRight;
                     var bottomSpawnZone = pickupData.spawnZone.bottomLeft;
-                    Vector3 spawnPoint = GetSpawnPoint(topSpawnZone, bottomSpawnZone, pickupData.sizeRadius);
+                    Vector3 spawnPoint = GetSpawnPoint(topSpawnZone, bottomSpawnZone, 1f);
 
                     var go = _gameobjectFactory.Build(pickupData.pickupPrefab);
 
@@ -44,6 +51,8 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
                                 go.GetInstanceID(), implementors.ToArray());
 
                     go.transform.position = spawnPoint;
+
+                    _currentPickups++;
 
                 }
             }
@@ -82,6 +91,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
         readonly Factories.IGameObjectFactory _gameobjectFactory;
         readonly IEntityFactory _entityFactory;
         readonly IPhysics _physics;
-        int _max_pickups;
+        int _maxPickups;
+        int _currentPickups;
     }
 }

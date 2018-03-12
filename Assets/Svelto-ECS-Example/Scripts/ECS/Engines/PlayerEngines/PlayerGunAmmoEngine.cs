@@ -13,7 +13,7 @@ namespace Svelto.ECS.Example.Survive.Player.Gun
         public void Step(ref PickupInfo pickup, int type)
         {
             IncrementAmmo(pickup.amount);
-            _pickupSequence.Next(this, ref pickup);
+            _pickupSequence.Next(this, ref pickup, type);
         }
 
         protected override void Add(GunEntityView entityView)
