@@ -44,7 +44,7 @@ namespace Svelto.ECS.Example.Survive.Player.Special
     public class SpecialEntityView : EntityView
     {
         public IPlayerSpecialAtributesComponent     specialComponent;
-        //public IPositionComponent                   positionComponent;
+        public IPlayerSpecialTriggerComponent       triggerComponent;
     }
 }
 

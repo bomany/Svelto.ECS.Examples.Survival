@@ -168,6 +168,7 @@ namespace Svelto.ECS.Example.Survive
 
             //hud and sound engines
             var hudEngine = new HUDEngine(time);
+            var hudSpecialEngine = new SpecialHUDEngine();
             var damageSoundEngine = new DamageSoundEngine();
             
             //The ISequencer implementaton is very simple, but allows to perform
@@ -277,6 +278,7 @@ namespace Svelto.ECS.Example.Survive
             _enginesRoot.AddEngine(new CameraFollowTargetEngine(time));
             _enginesRoot.AddEngine(damageSoundEngine);
             _enginesRoot.AddEngine(hudEngine);
+            _enginesRoot.AddEngine(hudSpecialEngine);
             _enginesRoot.AddEngine(new ScoreEngine(scoreOnEnemyKilledObserver));
         }
         
