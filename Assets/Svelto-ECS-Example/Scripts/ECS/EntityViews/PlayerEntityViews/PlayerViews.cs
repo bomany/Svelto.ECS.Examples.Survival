@@ -45,6 +45,7 @@ namespace Svelto.ECS.Example.Survive.Player.Special
     {
         public IPlayerSpecialAtributesComponent     specialComponent;
         public IPlayerSpecialTriggerComponent       triggerComponent;
+        public IPlayerSpecialAnimationComponent     animationComponent;
     }
 }
 

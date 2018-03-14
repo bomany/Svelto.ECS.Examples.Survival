@@ -7,25 +7,48 @@ using UnityEngine;
 
 namespace Svelto.ECS.Example.Survive.Enemies
 {
-    public class EnemyWaveSpawnerEngine : IEngine, IStep<DamageInfo>
-    {
-        public EnemyWaveSpawnerEngine(Factories.IGameObjectFactory gameobjectFactory, IEntityFactory entityFactory)
+    public class EnemyWaveSpawnerEngine : IEngine,
+                                          IStep<DamageInfo>
+    { 
+
+        public EnemyWaveSpawnerEngine(Factories.IGameObjectFactory gameobjectFactory,
+                                        IEntityFactory entityFactory,
+                                        ISequencer waveSpawnerSequence)
         {
             _gameobjectFactory = gameobjectFactory;
             _entityFactory = entityFactory;
+            _waveSpawnerSequence = waveSpawnerSequence;
 
             _numberOfEnemyAlive = 0;
-            _waveCount = 1;
+            _waveCount = 0;
             _dificulty = 5f;
 
-            IncreaseDificulty();
+            _enemiestoSpawn = ReadEnemySpawningDataServiceRequest();
 
-            IntervaledTick().Run();
+            WaitForWave().Run();
         }
 
-        void IncreaseDificulty()
+        IEnumerator WaitForWave()
         {
+            var waitTime = new WaitForSecondsEnumerator(5);
+            yield return waitTime;
+            SetupNewWave();
+        }
+
+        void SetupNewWave()
+        {
+            _waveCount++;
             _numberOfEnemyToSpawn = (int)(_waveCount * _dificulty);
+            //_numberOfEnemyToSpawn = (int)(System.Math.Log(_waveCount) * _dificulty) + _dificulty;
+
+            var waveInfo = new WaveInfo(_waveCount, _numberOfEnemyToSpawn);
+            SpawnWave().Run();
+            _waveSpawnerSequence.Next(this, ref waveInfo);
+        }
+
+        int DamageIncrease(int baseDamage)
+        {
+            return baseDamage + (int)(System.Math.Log(_waveCount)*5);
         }
 
         public void Step(ref DamageInfo token, int condition)
@@ -33,23 +56,21 @@ namespace Svelto.ECS.Example.Survive.Enemies
             _numberOfEnemyAlive--;
             if (_numberOfEnemyAlive <= 0 && _numberOfEnemyToSpawn <= 0)
             {
-                _waveCount++;
-                IncreaseDificulty();
+                SetupNewWave();
             }
         }
 
-        IEnumerator IntervaledTick()
+        IEnumerator SpawnWave()
         {
-            var enemiestoSpawn = ReadEnemySpawningDataServiceRequest();
-            while (true)
+            while (_numberOfEnemyToSpawn > 0)
             {
                 yield return _waitForSecondsEnumerator;
 
-                if (enemiestoSpawn != null)
+                if (_enemiestoSpawn != null)
                 {
-                    for (int i = enemiestoSpawn.Length - 1; i >= 0 && _numberOfEnemyToSpawn > 0; --i)
+                    for (int i = _enemiestoSpawn.Length - 1; i >= 0 && _numberOfEnemyToSpawn > 0; --i)
                     {
-                        var spawnData = enemiestoSpawn[i];
+                        var spawnData = _enemiestoSpawn[i];
 
                         if (spawnData.timeLeft <= 0.0f)
                         {
@@ -61,7 +82,7 @@ namespace Svelto.ECS.Example.Survive.Enemies
 
                             List<IImplementor> implementors = new List<IImplementor>();
                             go.GetComponentsInChildren(implementors);
-                            implementors.Add(new EnemyAttackImplementor(data.timeBetweenAttacks, data.attackDamage));
+                            implementors.Add(new EnemyAttackImplementor(data.timeBetweenAttacks, DamageIncrease(data.attackDamage)));
 
                             _entityFactory.BuildEntity<EnemyEntityDescriptor>(
                                     go.GetInstanceID(), implementors.ToArray());
@@ -95,12 +116,15 @@ namespace Svelto.ECS.Example.Survive.Enemies
 
         readonly Factories.IGameObjectFactory _gameobjectFactory;
         readonly IEntityFactory _entityFactory;
+        readonly ISequencer _waveSpawnerSequence;
+
         readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(1);
 
         int _numberOfEnemyAlive;
         int _waveCount;
         int _numberOfEnemyToSpawn;
         float _dificulty;
+        JSonEnemySpawnData[] _enemiestoSpawn;
 
     }
 }

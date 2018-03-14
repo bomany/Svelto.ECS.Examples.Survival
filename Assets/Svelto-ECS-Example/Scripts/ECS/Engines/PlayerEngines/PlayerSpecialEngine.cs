@@ -71,6 +71,9 @@ namespace Svelto.ECS.Example.Survive.Player.Special
 
             int[] ids = _physics.OverlapSphere(position, playerSpecialComponent.range, ENEMY_MASK);
 
+            // Should problably move this to a new engine
+            specialEntityView.animationComponent.trigger = "Special";
+
             for (var i = 0; i <= ids.Length-1; i++)
             {
                 PlayerTargetEntityView targetEntityView;
@@ -85,7 +88,6 @@ namespace Svelto.ECS.Example.Survive.Player.Special
                     targetEntityView.rigidBodyComponent.velocity = direction * force;
                 }
             }
-
         }
 
         PlayerEntityView        _playerEntityView;

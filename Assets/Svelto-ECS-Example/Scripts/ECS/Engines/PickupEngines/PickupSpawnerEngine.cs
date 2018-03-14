@@ -14,7 +14,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             _gameobjectFactory = gameobjectFactory;
             _entityFactory = entityFactory;
             _physics = physics;
-            _maxPickups = 1000;
+            _maxPickups = 10;
             _currentPickups = 0;
 
             IntervaledTick().Run();
@@ -30,6 +30,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             var pickuptoSpawn = ReadPickupSpawningDataServiceRequest();
             while (true)
             {
+                _waitForSecondsEnumerator.Reset(Random.Range(5, 30));
                 yield return _waitForSecondsEnumerator;
 
                 if (pickuptoSpawn != null &&
@@ -94,7 +95,7 @@ namespace Svelto.ECS.Example.Survive.Player.Pickup
             return pickuptoSpawn;
         }
 
-        readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(1);
+        readonly WaitForSecondsEnumerator _waitForSecondsEnumerator = new WaitForSecondsEnumerator(10);
 
         static readonly int SHOOTABLE_MASK = LayerMask.GetMask("Shootable");
 

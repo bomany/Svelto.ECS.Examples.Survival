@@ -223,7 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d870b4223628f40912aa7ef53fec27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Amount: 100
+  Amount: 10
   PickupType: 2
 --- !u!114 &114978899266921842
 MonoBehaviour:

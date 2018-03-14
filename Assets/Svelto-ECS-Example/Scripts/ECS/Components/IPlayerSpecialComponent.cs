@@ -15,6 +15,11 @@ namespace Svelto.ECS.Example.Survive.Player.Special
     {
         DispatchOnSet<bool> triggered { get; }
     }
+
+    public interface IPlayerSpecialAnimationComponent: IComponent
+    {
+        string trigger { set; }
+    }
 }
 
 namespace Svelto.ECS.Example.Survive.HUD
@@ -22,5 +27,6 @@ namespace Svelto.ECS.Example.Survive.HUD
     public interface ISpecialHUDComponent
     {
         float timer { get; set; }
+        bool showTimer { set; }
     }
 }

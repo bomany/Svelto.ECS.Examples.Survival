@@ -9,6 +9,7 @@ namespace Svelto.ECS.Example.Survive.Enemies
         }
         
         public int damage { get; private set; }
+        public int extraDamage { set { damage += value; } } 
         public float attackInterval { get; private set; }
         public float timer { get; set; }
     }

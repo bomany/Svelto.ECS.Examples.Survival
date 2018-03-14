@@ -8,5 +8,8 @@ namespace Svelto.ECS.Example.Survive.HUD
         public IScoreComponent          scoreComponent;
         public IAmmoComponent           ammoComponent;
         public ISpecialHUDComponent     specialComponent;
+
+        public IEnemyCountComponent     enemyCountComponent;
+        public IWaveWarningComponent    waveWarningComponent;
     }
 }

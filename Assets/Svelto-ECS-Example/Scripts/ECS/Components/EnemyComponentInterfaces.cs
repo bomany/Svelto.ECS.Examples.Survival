@@ -10,9 +10,10 @@ namespace Svelto.ECS.Example.Survive.Enemies
 
     public interface IEnemyAttackDataComponent: IComponent
     {
-        int   damage         { get; }
-        float attackInterval { get; }
-        float timer          { get; set; }
+        int   damage            { get; }
+        int   extraDamage       { set; }
+        float attackInterval    { get; }
+        float timer             { get; set; }
     }
 
     public interface IEnemyMovementComponent: IComponent

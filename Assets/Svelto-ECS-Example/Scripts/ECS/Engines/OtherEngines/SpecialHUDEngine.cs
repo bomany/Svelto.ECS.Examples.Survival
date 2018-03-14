@@ -47,10 +47,17 @@ namespace Svelto.ECS.Example.Survive.HUD
                 var specialHudComponent = _hudEntityView.specialComponent;
                 var timer = playerSpecialComponent.cooldown - playerSpecialComponent.timer;
 
-                if (timer < 0)
-                    timer = 0;
-
-                specialHudComponent.timer = timer;
+                if (timer > 0)
+                {
+                    specialHudComponent.showTimer = true;
+                    specialHudComponent.timer = timer;
+                }
+                else
+                {
+                    specialHudComponent.showTimer = false;
+                }
+                    
+                             
                  
                 yield return null;
             }

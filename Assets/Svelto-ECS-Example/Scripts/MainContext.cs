@@ -134,12 +134,13 @@ namespace Svelto.ECS.Example.Survive
             Sequencer playerDamageSequence = new Sequencer();
             Sequencer enemyDamageSequence = new Sequencer();
             Sequencer pickupSequence = new Sequencer();
+            Sequencer waveSpawnerSequence = new Sequencer();
 
             //wrap non testable unity static classes, so that 
             //can be mocked if needed.
             IRayCaster rayCaster = new RayCaster();
             ITime      time      = new Survive.Time();
-            IPhysics physics = new Physics();
+            IPhysics physics     = new Physics();
 
             //Player related engines. ALL the dependecies must be solved at this point
             //through constructor injection.
@@ -158,7 +159,7 @@ namespace Svelto.ECS.Example.Survive
             var enemyAttackEngine = new EnemyAttackEngine(playerDamageSequence, time);
             var enemyMovementEngine = new EnemyMovementEngine();
             //var enemySpawnerEngine = new EnemySpawnerEngine(factory, _entityFactory);
-            var enemyWaveSpawnerEngine = new EnemyWaveSpawnerEngine(factory, _entityFactory);
+            var enemyWaveSpawnerEngine = new EnemyWaveSpawnerEngine(factory, _entityFactory, waveSpawnerSequence);
             var enemyDeathEngine = new EnemyDeathEngine(entityFunctions);
 
             //pickup related engines
@@ -169,6 +170,7 @@ namespace Svelto.ECS.Example.Survive
             //hud and sound engines
             var hudEngine = new HUDEngine(time);
             var hudSpecialEngine = new SpecialHUDEngine();
+            var hudWaveSpawnerEngine = new WaveSpawnerHUDEngine(time);
             var damageSoundEngine = new DamageSoundEngine();
             
             //The ISequencer implementaton is very simple, but allows to perform
@@ -218,7 +220,7 @@ namespace Svelto.ECS.Example.Survive
                         { 
                             {  DamageCondition.Damage, new IStep[] { enemyAnimationEngine, damageSoundEngine }  },
                             {  DamageCondition.Dead, new IStep[] { enemyMovementEngine, 
-                                enemyAnimationEngine, playerShootingEngine, enemyWaveSpawnerEngine, damageSoundEngine, enemyDeathEngine }  },
+                                enemyAnimationEngine, playerShootingEngine, enemyWaveSpawnerEngine, damageSoundEngine, enemyDeathEngine, hudWaveSpawnerEngine }  },
                         }  
                     }  
                 }
@@ -252,6 +254,19 @@ namespace Svelto.ECS.Example.Survive
                 }
             );
 
+            waveSpawnerSequence.SetSequence(
+                new Steps
+                {
+                    {
+                        enemyWaveSpawnerEngine,
+                        new To
+                        {
+                            hudWaveSpawnerEngine
+                        }
+                    }
+                }
+            );
+
             //Mandatory step to make engines work
             //Player engines
             _enginesRoot.AddEngine(playerMovementEngine);
@@ -280,6 +295,7 @@ namespace Svelto.ECS.Example.Survive
             _enginesRoot.AddEngine(hudEngine);
             _enginesRoot.AddEngine(hudSpecialEngine);
             _enginesRoot.AddEngine(new ScoreEngine(scoreOnEnemyKilledObserver));
+            _enginesRoot.AddEngine(hudWaveSpawnerEngine);
         }
         
         /// <summary>
